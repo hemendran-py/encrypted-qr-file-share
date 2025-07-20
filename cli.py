@@ -1,4 +1,6 @@
 import argparse
+from encryptor import encrypt_file, decrypt_file
+from qr_generator import generate_qr_code
 
 
 def main():
@@ -25,14 +27,26 @@ def main():
     args = parser.parse_args()
 
     if args.command == 'encrypt':
-        print('Encrypting file...')
-        # Call encrypt_file here
+        print(f'Encrypting {args.input} to {args.output}...')
+        try:
+            encrypt_file(args.input, args.output, args.password)
+            print('Encryption successful.')
+        except Exception as e:
+            print(f'Encryption failed: {e}')
     elif args.command == 'decrypt':
-        print('Decrypting file...')
-        # Call decrypt_file here
+        print(f'Decrypting {args.input} to {args.output}...')
+        try:
+            decrypt_file(args.input, args.output, args.password)
+            print('Decryption successful.')
+        except Exception as e:
+            print(f'Decryption failed: {e}')
     elif args.command == 'qr':
-        print('Generating QR code...')
-        # Call generate_qr_code here
+        print(f'Generating QR code to {args.output}...')
+        try:
+            generate_qr_code(args.data, args.output)
+            print('QR code generated successfully.')
+        except Exception as e:
+            print(f'QR code generation failed: {e}')
     else:
         parser.print_help()
 
