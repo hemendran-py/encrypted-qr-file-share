@@ -4,10 +4,11 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.backends import default_backend
 import os
 
+
 # Constants
-SALT_SIZE = 16  # 128-bit salt
-NONCE_SIZE = 12  # 96-bit nonce for AES-GCM
-KEY_SIZE = 32  # 256-bit key
+SALT_SIZE = 16 
+NONCE_SIZE = 12  
+KEY_SIZE = 32  
 ITERATIONS = 100_000
 
 

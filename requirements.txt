@@ -1,3 +1,5 @@
 cryptography
 qrcode
-Flask 
+Flask
+Pillow
+pyzbar 
