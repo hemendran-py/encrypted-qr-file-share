@@ -84,7 +84,7 @@ def qr_to_file_with_extracted_key(qr_image_path, output_file_path):
 
 def get_file_info_from_qr(qr_image_path):
     """
-    Extract and display information about the encrypted file in QR code without decrypting.
+    Extract and display information about the XOR-encrypted file in QR code without decrypting.
     
     Args:
         qr_image_path (str): Path to the QR code image
@@ -95,24 +95,14 @@ def get_file_info_from_qr(qr_image_path):
     try:
         encrypted_data, password = read_qr_with_extracted_key(qr_image_path)
         
-        # Parse encrypted file structure (salt + nonce + tag + ciphertext)
-        SALT_SIZE = 16
-        NONCE_SIZE = 12
-        TAG_SIZE = 16
-        
-        salt = encrypted_data[:SALT_SIZE]
-        nonce = encrypted_data[SALT_SIZE:SALT_SIZE+NONCE_SIZE]
-        tag = encrypted_data[SALT_SIZE+NONCE_SIZE:SALT_SIZE+NONCE_SIZE+TAG_SIZE]
-        ciphertext = encrypted_data[SALT_SIZE+NONCE_SIZE+TAG_SIZE:]
-        
+        # For XOR encryption, the data is just the encrypted bytes
         info = {
             'encrypted_size': len(encrypted_data),
-            'ciphertext_size': len(ciphertext),
-            'salt_hex': salt.hex(),
-            'nonce_hex': nonce.hex(),
-            'tag_hex': tag.hex(),
+            'ciphertext_size': len(encrypted_data),  # Same as encrypted_size for XOR
+            'encryption_type': 'XOR with chaotic key generation',
             'has_hidden_password': True,
-            'password_length': len(password)
+            'password_length': len(password),
+            'key_length': 256  # Fixed key length for chaotic key generation
         }
         
         return info

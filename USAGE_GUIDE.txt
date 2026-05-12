@@ -1,0 +1,182 @@
+===============================================================================
+                    SECURE FILE SHARING - USAGE GUIDE
+                    Pure XOR with Chaotic Key Generation
+===============================================================================
+
+OVERVIEW
+--------
+This system uses pure XOR encryption with chaotic key generation based on the
+Logistic Map formula. The password is converted to a chaotic key using the
+formula: x_{n+1} = 3.99 * x_n * (1 - x_n)
+
+Key Features:
+- Pure XOR encryption (no AES)
+- Chaotic key generation from passwords
+- Key repetition using modulo indexing for large files
+- QR codes with steganographically hidden passwords
+- 256-byte chaotic keys
+- ONLY 2 SIMPLE COMMANDS NEEDED!
+
+INSTALLATION
+------------
+1. Install Python 3.7 or higher
+2. Install dependencies:
+   pip install -r requirements.txt
+
+USAGE OPTIONS
+-------------
+
+OPTION 1: GUI (Recommended)
+---------------------------
+Launch the graphical user interface:
+   python gui.py
+   
+Or use the launcher:
+   python run_gui.py
+
+Features:
+- User-friendly interface with tabs
+- File browser dialogs
+- Progress indicators
+- Error handling with popup messages
+- No command line knowledge needed
+
+OPTION 2: Command Line Interface
+--------------------------------
+For advanced users or automation:
+
+AVAILABLE COMMANDS (SIMPLIFIED)
+-------------------------------
+
+1. ENCRYPT FILE AND CREATE QR CODE
+   Command: python cli.py encrypt <input_file> <qr_image> <password>
+   Example: python cli.py encrypt secret.txt secret_qr.png "MyPassword123"
+   
+   What it does:
+   - Encrypts the file using XOR with chaotic key generation
+   - Creates a QR code containing the encrypted data
+   - Hides the password steganographically in the QR code image
+   - Outputs a single QR code image with everything needed for decryption
+
+2. DECRYPT FILE FROM QR CODE
+   Command: python cli.py decrypt <qr_image> <output_file>
+   Example: python cli.py decrypt secret_qr.png decrypted.txt
+   
+   What it does:
+   - Scans the QR code to extract encrypted data
+   - Automatically extracts the hidden password from the QR image
+   - Decrypts the data using the extracted password
+   - Saves the decrypted file
+
+That's it! Only 2 commands needed for complete encryption and decryption workflow.
+
+TESTING EXAMPLES
+----------------
+
+1. Basic Test:
+   echo "This is my secret message!" > test.txt
+   python cli.py encrypt test.txt secret.png "MyPassword"
+   python cli.py decrypt secret.png decrypted.txt
+   type decrypted.txt
+
+2. Large File Test:
+   echo "This is a much longer message that exceeds 256 bytes to test the modulo indexing functionality of the chaotic key generation system. We need to make sure the key repeats properly when the file is larger than the 256-byte key length." > large.txt
+   python cli.py encrypt large.txt large_qr.png "LongFilePassword"
+   python cli.py decrypt large_qr.png large_decrypted.txt
+   type large_decrypted.txt
+
+3. Different Files Test:
+   echo "Secret document content" > document.txt
+   echo "Another secret message" > message.txt
+   python cli.py encrypt document.txt doc_qr.png "DocPassword"
+   python cli.py encrypt message.txt msg_qr.png "MsgPassword"
+   python cli.py decrypt doc_qr.png doc_decrypted.txt
+   python cli.py decrypt msg_qr.png msg_decrypted.txt
+
+TECHNICAL DETAILS
+-----------------
+
+Chaotic Key Generation Process:
+1. Password → SHA-256 hash
+2. First 8 bytes of hash → numerical seed (0-1)
+3. Logistic Map: x_{n+1} = 3.99 × x_n × (1 - x_n)
+4. Generate 256 bytes from chaotic sequence
+5. Use modulo indexing: key[i % 256] for file encryption
+
+XOR Encryption Process:
+- For each byte in file: encrypted_byte = file_byte ⊕ key[i % 256]
+- Key repeats every 256 bytes using modulo indexing
+- XOR is symmetric: decryption = encryption
+
+Steganography (LSB):
+- Password hidden in least significant bits of QR code image
+- Each RGB pixel can hide 3 bits of data
+- Length prefix (4 bytes) + password data
+
+FILE FORMATS
+------------
+
+QR Code Files:
+- PNG image containing:
+  - QR code with XOR-encrypted data
+  - Password hidden in LSB of image pixels
+- Single file contains everything needed for decryption
+- No separate password file needed!
+
+SECURITY NOTES
+--------------
+
+Strengths:
+- Chaotic key generation provides unpredictable keys
+- Password-derived keys are deterministic
+- LSB steganography hides password in QR code
+- XOR encryption is fast and simple
+- Single QR code contains all necessary information
+
+Considerations:
+- XOR alone provides basic encryption (not authenticated)
+- Key repetition pattern could theoretically be analyzed
+- LSB steganography is detectable with analysis
+- Suitable for low to medium security applications
+
+TROUBLESHOOTING
+---------------
+
+Common Issues:
+1. "No QR code found in image" - Image doesn't contain valid QR code
+2. "No hidden data found" - QR image doesn't contain steganographic data
+3. Decryption fails - Wrong password was used during encryption or corrupted file
+4. Import errors - Run: pip install -r requirements.txt
+
+File Size Limits:
+- No practical limit on file size (key repetition handles large files)
+- QR codes have data capacity limits (~3KB for small QR codes)
+- For very large files, the QR code might become large
+
+PERFORMANCE
+-----------
+- XOR encryption is very fast
+- Chaotic key generation adds minimal overhead
+- QR code generation depends on data size
+- LSB steganography is relatively fast
+
+WORKFLOW SUMMARY
+----------------
+
+GUI Workflow (Recommended):
+1. Launch: python gui.py
+2. Encrypt Tab: Select file, set password, choose QR output location
+3. Share: Send the QR code image to anyone
+4. Decrypt Tab: Select QR code, choose output location
+5. Done: Password automatically extracted from QR code
+
+CLI Workflow (Advanced):
+1. Encrypt: python cli.py encrypt <file> <qr_image> <password>
+2. Share: Send the QR code image to anyone
+3. Decrypt: python cli.py decrypt <qr_image> <output_file>
+
+The recipient only needs the QR code image - no separate password sharing required!
+
+===============================================================================
+                           END OF USAGE GUIDE
+===============================================================================

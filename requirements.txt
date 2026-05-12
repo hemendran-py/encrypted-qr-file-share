@@ -2,4 +2,5 @@ cryptography
 qrcode
 Flask
 Pillow
-pyzbar 
+pyzbar
+numpy 
